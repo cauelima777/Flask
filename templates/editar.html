@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar - {{ entrada.titulo }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --font-family: 'Inter', sans-serif; }
+        body { font-family: var(--font-family); }
+        .write-container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        
+        input[name="titulo"] {
+            font-size: 2.5rem; font-weight: 800; border: none; background: transparent;
+            padding: 0; margin-bottom: 1.5rem; outline: none; box-shadow: none; color: var(--h1-color);
+        }
+
+        #editor { font-size: 1.2rem; border: none; min-height: 400px; color: var(--color); }
+        .ql-toolbar.ql-snow { border: none; border-bottom: 1px solid #eee; background: var(--background-color); }
+        .ql-container.ql-snow { border: none; }
+
+        .btn-save { margin-top: 2rem; border-radius: 50px; padding: 12px 30px; font-weight: 600; float: right; }
+        
+        #theme-toggle {
+            position: fixed; top: 20px; right: 20px;
+            background: var(--card-background-color); border-radius: 50%; width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #eee; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <main class="write-container">
+        <nav>
+            <ul><li><a href="{{ url_for('visualizar', id=entrada.id) }}" class="secondary">← Cancelar</a></li></ul>
+        </nav>
+
+        <form method="POST" id="diario-form">
+            <input type="text" name="titulo" id="titulo" value="{{ entrada.titulo }}" required autocomplete="off">
+
+            <div id="editor"></div>
+            <input type="hidden" name="conteudo" id="conteudo-db">
+
+            <button type="submit" class="btn-save">Salvar Alterações</button>
+        </form>
+    </main>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: { toolbar: [['bold', 'italic', 'underline'], ['blockquote', 'link'], [{ 'list': 'ordered'}, { 'list': 'bullet' }]] }
+        });
+
+        // IMPORTANTE: Injeta o conteúdo HTML do banco de dados no editor
+        quill.root.innerHTML = {{ entrada.conteudo|tojson|safe }};
+
+        var form = document.getElementById('diario-form');
+        form.onsubmit = function() {
+            var hiddenInput = document.getElementById('conteudo-db');
+            hiddenInput.value = quill.root.innerHTML;
+        };
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('journal-theme', newTheme);
+            document.getElementById('theme-icon').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        const saved = localStorage.getItem('journal-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diários de {{ ano }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+
+        /* Cabeçalho e Navegação */
+        .header-section { margin-top: 60px; margin-bottom: 50px; }
+        .back-btn { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 0.9rem; }
+        
+        /* Estilo dos Cards de Memória */
+        .memory-list { display: flex; flex-direction: column; gap: 20px; }
+        
+        .memory-card {
+            border: none;
+            background: rgba(120, 120, 120, 0.05);
+            border: 1px solid rgba(120, 120, 120, 0.1);
+            border-radius: 18px;
+            padding: 50px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+      
+        }
+
+        .memory-card:hover {
+            transform: scale(1.01);
+            background: rgba(120, 120, 120, 0.08);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .memory-card header { 
+            background: transparent; 
+            border: none; 
+            padding: 0; 
+            margin-bottom: 15px; 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .memory-date {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .memory-title { margin: 0; font-weight: 800; font-size: 1.6rem; }
+
+        /* Rodapé do Card (Ações) */
+        .memory-card footer {
+            background: transparent;
+            border: none;
+            padding: 15px 0 0 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--color);
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover { opacity: 1; color: var(--primary); }
+        .delete-btn:hover { color: #e74c3c !important; }
+
+        /* Botão de Tema */
+        #theme-toggle {
+            position: fixed; top: 25px; right: 25px;
+            background: var(--card-background-color);
+            border-radius: 50%; width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid rgba(120, 120, 120, 0.2); z-index: 1000;
+        }
+
+
+                /* Botão Nova Memória */
+        .fab-new {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            border-radius: 50px;
+            padding: 15px 30px;
+            background-color: #6366f1;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            text-decoration: none;
+            border: none;
+            z-index: 999;
+        }
+
+    </style>
+</head>
+<body class="container">
+
+    <div id="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <div class="header-section">
+        <a href="{{ url_for('index') }}" class="back-btn">← Voltar para a Estante</a>
+        <h1 style="margin-top: 20px; font-weight: 800; letter-spacing: -1.5px;">Diários de {{ ano }}</h1>
+    </div>
+
+    <div class="memory-list">
+        {% for entrada in entradas %}
+        <article class="memory-card">
+            <header>
+                <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y') }}</span>
+            </header>
+            
+            <h3 class="memory-title">{{ entrada.titulo }}</h3>
+             
+            <footer>
+                <a href="{{ url_for('visualizar', id=entrada.id) }}" class="action-btn">📖 Ler Memória</a>
+                <a href="{{ url_for('editar', id=entrada.id) }}" class="action-btn">✏️ Editar</a>
+                <a href="#" class="action-btn delete-btn" 
+                   onclick="if(confirm('Apagar esta memória para sempre?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
+                   🗑️ Excluir
+                </a>
+            </footer>
+        </article>
+        {% else %}
+
+        
+        <div style="text-align: center; padding: 100px; opacity: 0.5;">
+            <p>Nenhuma memória encontrada neste ano.</p>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('escrever') }}" class="fab-new">+ Nova Memória</a>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('journal-theme', newTheme);
+            updateIcon(newTheme);
+        }
+
+        function updateIcon(theme) {
+            document.getElementById('theme-icon').innerText = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        const savedTheme = localStorage.getItem('journal-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateIcon(savedTheme);
+    </script>
+</body>
+</html>

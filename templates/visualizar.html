@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ entrada.titulo }} - Diário</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --font-family: 'Inter', sans-serif;
+            --background-color: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #11191f;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            line-height: 1.8;
+        }
+
+        .view-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Navegação de topo */
+        .view-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        .back-link {
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: #888;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        /* Cabeçalho da Memória */
+        header {
+            margin-bottom: 3rem;
+        }
+
+        .view-date {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin: 0;
+            color: var(--h1-color);
+        }
+
+        /* Conteúdo Principal */
+        .view-content {
+            font-size: 1.25rem;
+            color: var(--color);
+            opacity: 0.9;
+        }
+
+        /* Rodapé de Ações */
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 20px;
+        }
+
+        [data-theme="dark"] footer {
+            border-top-color: #2d333b;
+        }
+
+        .btn-action {
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #888;
+            transition: color 0.2s;
+        }
+
+        .btn-action:hover {
+            color: var(--primary);
+        }
+
+        /* Toggle de Tema */
+        #theme-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: var(--card-background-color);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <main class="view-container">
+        <nav class="view-nav">
+            <a href="{{ url_for('index') }}" class="back-link">← Voltar para a estante</a>
+        </nav>
+
+        <header>
+            <span class="view-date">{{ entrada.data_criacao.strftime('%d de %B, %Y') }}</span>
+            <h1>{{ entrada.titulo }}</h1>
+        </header>
+
+        <article class="view-content">
+            {{ entrada.conteudo|safe }}
+        </article>
+
+        <footer>
+            <a href="{{ url_for('editar', id=entrada.id) }}" class="btn-action">Editar esta memória</a>
+            <a href="#" class="btn-action" style="color: #e74c3c;" 
+               onclick="if(confirm('Apagar permanentemente?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
+               Excluir
+            </a>
+        </footer>
+    </main>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('journal-theme', newTheme);
+            updateIcon(newTheme);
+        }
+
+        function updateIcon(theme) {
+            document.getElementById('theme-icon').innerText = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        const saved = localStorage.getItem('journal-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        updateIcon(saved);
+    </script>
+</body>
+</html>
