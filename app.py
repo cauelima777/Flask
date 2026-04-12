@@ -9,13 +9,13 @@ from sqlalchemy import extract
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-import locale
+
 
 load_dotenv()
 
 app = Flask(__name__)
 
-locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
+
 
 
 # Dica: Adicione uma SECRET_KEY para as sessões de login funcionarem
