@@ -3,136 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ entrada.titulo }} - Diário</title>
+    <title>{{ entrada.titulo }} — Diário</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     
     <style>
         :root {
             --primary: #6366f1;
-            --font-family: 'Inter', sans-serif;
-            --background-color: #ffffff;
+            --primary-hover: #4f46e5;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-serif: 'Lora', serif;
+            --bg-light: radial-gradient(circle at top left, #f8fafc, #ffffff);
+            --bg-dark: #0f172a;
+            --text-muted: #64748b;
         }
 
         [data-theme="dark"] {
-            --background-color: #11191f;
+            --background-color: var(--bg-dark);
+            --text-muted: #94a3b8;
         }
 
         body {
-            font-family: var(--font-family);
-            background-color: var(--background-color);
-            line-height: 1.8;
+            font-family: var(--font-main);
+            background: var(--background-color);
+            background-attachment: fixed;
+            transition: background 0.4s ease;
         }
 
         .view-container {
-            max-width: 720px;
+            max-width: 760px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 80px 24px;
         }
 
-        /* Navegação de topo */
+        /* Navegação sutil */
         .view-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4rem;
+            margin-bottom: 5rem;
         }
 
         .back-link {
             text-decoration: none;
-            font-size: 0.9rem;
-            color: #888;
-            transition: color 0.2s;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
         }
 
         .back-link:hover {
             color: var(--primary);
+            transform: translateX(-4px);
         }
 
-        /* Cabeçalho da Memória */
+        /* Tipografia do Cabeçalho */
         header {
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
 
         .view-date {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 0.2em;
             color: var(--primary);
-            font-weight: 600;
+            font-weight: 800;
             display: block;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         h1 {
-            font-size: 3.2rem;
+            font-size: clamp(2.5rem, 8vw, 4rem); /* Responsivo */
             font-weight: 800;
-            letter-spacing: -2px;
-            line-height: 1.1;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
             margin: 0;
             color: var(--h1-color);
         }
 
-        /* Conteúdo Principal */
+        /* Estilo do Conteúdo - Foco em Leitura */
         .view-content {
-            font-size: 1.25rem;
+            font-family: var(--font-serif); /* Fonte serifada para o texto longo */
+            font-size: 1.35rem;
+            line-height: 1.85;
             color: var(--color);
-            opacity: 0.9;
+            opacity: 0.95;
         }
 
-        /* Rodapé de Ações */
+        /* Estilizando parágrafos e elementos dentro do conteúdo rico */
+        .view-content p { margin-bottom: 2rem; }
+        .view-content blockquote {
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+            padding-left: 1.5rem;
+            margin: 2.5rem 0;
+            color: var(--text-muted);
+        }
+
+        /* Rodapé Elegante */
         footer {
-            margin-top: 5rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
+            margin-top: 8rem;
+            padding-top: 3rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
             display: flex;
-            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
 
         [data-theme="dark"] footer {
-            border-top-color: #2d333b;
+            border-top-color: rgba(255,255,255,0.05);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 24px;
         }
 
         .btn-action {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             text-decoration: none;
-            color: #888;
-            transition: color 0.2s;
+            color: var(--text-muted);
+            transition: all 0.2s;
         }
 
         .btn-action:hover {
             color: var(--primary);
         }
 
-        /* Toggle de Tema */
+        /* Botão de Tema "Glassmorphism" */
         #theme-toggle {
             position: fixed;
-            top: 25px;
-            right: 25px;
-            background: var(--card-background-color);
+            bottom: 40px; /* Mudei para baixo para não poluir o topo */
+            right: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.05);
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #eee;
-            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        [data-theme="dark"] #theme-toggle {
+            background: rgba(15, 23, 42, 0.7);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        #theme-toggle:hover {
+            transform: scale(1.1) rotate(12deg);
+        }
+
+        /* Ajustes Mobile */
+        @media (max-width: 600px) {
+            .view-container { padding: 40px 20px; }
+            h1 { font-size: 2.5rem; }
+            footer { flex-direction: column; gap: 20px; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
-    <div id="theme-toggle" onclick="toggleTheme()">
-        <span id="theme-icon">🌙</span>
+    <div id="theme-toggle" title="Alternar tema" onclick="toggleTheme()">
+        <span id="theme-icon" style="font-size: 1.2rem;">🌙</span>
     </div>
 
     <main class="view-container">
         <nav class="view-nav">
-            <a href="{{ url_for('index') }}" class="back-link">← Voltar para a estante</a>
+            <a href="{{ url_for('index') }}" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Estante
+            </a>
         </nav>
 
         <header>
@@ -145,11 +193,16 @@
         </article>
 
         <footer>
-            <a href="{{ url_for('editar', id=entrada.id) }}" class="btn-action">Editar esta memória</a>
-            <a href="#" class="btn-action" style="color: #e74c3c;" 
-               onclick="if(confirm('Apagar permanentemente?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
-               Excluir
-            </a>
+            <div class="action-group">
+                <a href="{{ url_for('editar', id=entrada.id) }}" class="btn-action">Editar</a>
+                <a href="#" class="btn-action" style="color: #f87171;" 
+                   onclick="if(confirm('Apagar esta memória para sempre?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
+                   Excluir
+                </a>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
+                Escrito por você.
+            </span>
         </footer>
     </main>
 

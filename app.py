@@ -1,16 +1,30 @@
+import os
+
 from flask import Flask, render_template, request, redirect, url_for
+from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import extract
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
+import locale
+
+load_dotenv()
+
 app = Flask(__name__)
+
+locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
+
+
 # Dica: Adicione uma SECRET_KEY para as sessões de login funcionarem
-app.config['SECRET_KEY'] = 'sua_chave_secreta_aqui' 
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '0188fd1ed61edf9fbe7037b4dba2991d8111ec3eab032a14')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Boa prática para economizar recursos
+
 app.config['SESSION_PERMANENT'] = False
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:U3QMcFCPz9G6EhvsLr7npp9pVQ5tgMeY@dpg-d7b6ftgule4c738sbue0-a.oregon-postgres.render.com/banco_yo'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
+
 db = SQLAlchemy(app)
 
 

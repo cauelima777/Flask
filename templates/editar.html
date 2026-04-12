@@ -1,33 +1,144 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-theme="light">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar - {{ entrada.titulo }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Escrever Memória - Diário</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
     <style>
-        :root { --primary: #6366f1; --font-family: 'Inter', sans-serif; }
-        body { font-family: var(--font-family); }
-        .write-container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-        
-        input[name="titulo"] {
-            font-size: 2.5rem; font-weight: 800; border: none; background: transparent;
-            padding: 0; margin-bottom: 1.5rem; outline: none; box-shadow: none; color: var(--h1-color);
+        :root { 
+            --primary: #6366f1; 
+            --font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        #editor { font-size: 1.2rem; border: none; min-height: 400px; color: var(--color); }
-        .ql-toolbar.ql-snow { border: none; border-bottom: 1px solid #eee; background: var(--background-color); }
-        .ql-container.ql-snow { border: none; }
+        body { 
+            font-family: var(--font-family);
+            background: var(--background-color); 
+            transition: background 0.4s ease;
+            margin: 0;
+        }
 
-        .btn-save { margin-top: 2rem; border-radius: 50px; padding: 12px 30px; font-weight: 600; float: right; }
-        
+        .editor-container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 60px 20px 120px; /* Espaço para a barra inferior */
+        }
+
+        /* --- TÍTULO MINIMALISTA --- */
+        .titulo-input {
+            font-size: clamp(2rem, 5vw, 3.5rem) !important;
+            font-weight: 800 !important;
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            margin-bottom: 2rem !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: var(--h1-color) !important;
+            letter-spacing: -2px;
+            height: auto !important;
+        }
+
+        .titulo-input::placeholder { opacity: 0.2; }
+
+        /* --- AJUSTES DO QUILL (MODO FOCO) --- */
+        #editor {
+            font-family: var(--font-family);
+            font-size: 1.25rem;
+            border: none !important;
+            min-height: 50vh;
+            color: var(--color);
+        }
+
+        .ql-toolbar.ql-snow {
+            border: none !important;
+            border-bottom: 1px solid rgba(120, 120, 120, 0.1) !important;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--background-color);
+            padding: 15px 0 !important;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Corrigindo o bug do seletor "Normal" azul */
+        .ql-snow .ql-picker.ql-header {
+            background: transparent !important;
+            border: 1px solid rgba(120, 120, 120, 0.2) !important;
+            border-radius: 6px;
+            color: var(--color) !important;
+        }
+
+        .ql-snow .ql-picker-label { color: var(--color) !important; }
+
+        .ql-container.ql-snow { border: none !important; }
+        .ql-editor { padding: 0 !important; }
+        .ql-editor.ql-blank::before { left: 0 !important; font-style: normal !important; opacity: 0.3; }
+
+        /* Cores Dark Mode para os ícones */
+        [data-theme="dark"] .ql-snow .ql-stroke { stroke: #94a3b8; }
+        [data-theme="dark"] .ql-snow .ql-fill { fill: #94a3b8; }
+        [data-theme="dark"] .ql-snow .ql-picker { color: #94a3b8; }
+
+        /* --- BARRA DE AÇÃO INFERIOR FIXA --- */
+        .bottom-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(var(--background-color), 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 0;
+            border-top: 1px solid rgba(120, 120, 120, 0.1);
+            z-index: 1000;
+        }
+
+        .action-content {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            border: none;
+            border-radius: 100px;
+            padding: 12px 40px;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            margin: 0;
+            width: auto;
+        }
+
+        .btn-cancel {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* --- THEME TOGGLE --- */
         #theme-toggle {
             position: fixed; top: 20px; right: 20px;
-            background: var(--card-background-color); border-radius: 50%; width: 45px; height: 45px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #eee; z-index: 100;
+            width: 45px; height: 45px;
+            background: rgba(120, 120, 120, 0.1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 1100;
+        }
+
+        @media (max-width: 600px) {
+            .editor-container { padding-top: 40px; }
+            .action-content { gap: 10px; }
         }
     </style>
 </head>
@@ -37,18 +148,22 @@
         <span id="theme-icon">🌙</span>
     </div>
 
-    <main class="write-container">
-        <nav>
-            <ul><li><a href="{{ url_for('visualizar', id=entrada.id) }}" class="secondary">← Cancelar</a></li></ul>
-        </nav>
+    <main class="editor-container">
+        <form method="POST" id="diary-form">
+            <input type="text" name="titulo" class="titulo-input" 
+                   placeholder="Título da memória..." 
+                   value="{{ entrada.titulo if entrada else '' }}" required autocomplete="off" autofocus>
+            
+            <div id="editor">{{ entrada.conteudo|safe if entrada else '' }}</div>
+            
+            <input type="hidden" name="conteudo" id="conteudo-input">
 
-        <form method="POST" id="diario-form">
-            <input type="text" name="titulo" id="titulo" value="{{ entrada.titulo }}" required autocomplete="off">
-
-            <div id="editor"></div>
-            <input type="hidden" name="conteudo" id="conteudo-db">
-
-            <button type="submit" class="btn-save">Salvar Alterações</button>
+            <div class="bottom-action-bar">
+                <div class="action-content">
+                    <a href="{{ url_for('index') }}" class="btn-cancel">Descartar rascunho</a>
+                    <button type="submit" class="btn-save">Eternizar Memória</button>
+                </div>
+            </div>
         </form>
     </main>
 
@@ -56,16 +171,25 @@
     <script>
         var quill = new Quill('#editor', {
             theme: 'snow',
-            modules: { toolbar: [['bold', 'italic', 'underline'], ['blockquote', 'link'], [{ 'list': 'ordered'}, { 'list': 'bullet' }]] }
+            placeholder: 'O que está passando pela sua mente agora?',
+            modules: {
+                toolbar: [
+                  
+                    ['bold', 'italic', 'underline', 'blockquote'],
+                    [{'list': 'ordered'}, {'list': 'bullet'}],
+                    ['link', 'clean']
+                ]
+            }
         });
 
-        // IMPORTANTE: Injeta o conteúdo HTML do banco de dados no editor
-        quill.root.innerHTML = {{ entrada.conteudo|tojson|safe }};
-
-        var form = document.getElementById('diario-form');
-        form.onsubmit = function() {
-            var hiddenInput = document.getElementById('conteudo-db');
-            hiddenInput.value = quill.root.innerHTML;
+        var form = document.getElementById('diary-form');
+        form.onsubmit = function(e) {
+            if (quill.getText().trim().length === 0) {
+                alert("O diário não aceita páginas em branco. Escreva algo!");
+                e.preventDefault();
+                return false;
+            }
+            document.getElementById('conteudo-input').value = quill.root.innerHTML;
         };
 
         function toggleTheme() {
@@ -73,11 +197,16 @@
             const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('journal-theme', newTheme);
-            document.getElementById('theme-icon').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+            updateIcon(newTheme);
         }
 
-        const saved = localStorage.getItem('journal-theme') || 'light';
-        document.documentElement.setAttribute('data-theme', saved);
+        function updateIcon(theme) {
+            document.getElementById('theme-icon').innerText = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        const savedTheme = localStorage.getItem('journal-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateIcon(savedTheme);
     </script>
 </body>
 </html>

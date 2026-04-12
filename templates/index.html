@@ -4,109 +4,237 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Estante</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
-        
-        /* Grid de Pastas */
-        .folder-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 25px; 
-            padding: 20px 0; 
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            /* Cores de fundo dinâmicas */
+            --bg-page: #020617;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
         }
 
-        .folder { 
+        [data-theme="light"] {
+            --bg-page: #f8fafc;
+            --card-bg: rgba(0, 0, 0, 0.02);
+            --card-border: rgba(0, 0, 0, 0.08);
+        }
+
+        body { 
+            font-family: var(--font-family); 
+            background: var(--bg-page);
+            min-height: 100vh;
+            margin: 0;
+            padding-bottom: 120px; /* Espaço para o menu inferior */
+            transition: background 0.4s ease;
+        }
+
+        /* Container Principal */
+        .shelf-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header { 
+            padding: 80px 0 40px; 
             text-align: center; 
+        }
+        
+        h1 { 
+            font-size: clamp(2.5rem, 8vw, 3.5rem); 
+            font-weight: 800; 
+            letter-spacing: -2px; 
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Grid corrigido */
+        .folder-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 25px;
+            width: 100%;
+        }
+
+        .folder-card { 
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
             padding: 40px 20px; 
-            border-radius: 20px; 
-            background: rgba(120, 120, 120, 0.05); 
-            border: 1px solid rgba(120, 120, 120, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-radius: 28px; 
             text-decoration: none;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .folder:hover { 
-            background: rgba(99, 102, 241, 0.15); 
-            border-color: #6366f1;
-            transform: translateY(-8px); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .folder-card:hover { 
+            transform: translateY(-10px); 
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
 
-        .folder-icon { font-size: 4rem; margin-bottom: 15px; }
-        .folder-name { font-weight: 700; font-size: 1.3rem; color: var(--h1-color); }
+        .folder-icon { 
+            font-size: 4rem; 
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.1));
+        }
 
-        /* Botão de Tema */
-        #theme-toggle {
+        .folder-name { 
+            font-weight: 800; 
+            font-size: 1.4rem; 
+            color: var(--h1-color); 
+            margin-bottom: 4px;
+        }
+
+        .folder-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        /* Menu Inferior Fixo */
+        .bottom-nav {
             position: fixed;
-            top: 25px;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px 30px;
+            border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        [data-theme="light"] .bottom-nav {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .nav-link {
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color);
+            transition: 0.2s;
+        }
+
+        .nav-link:hover { color: var(--primary); }
+        .logout-link:hover { color: #f87171; }
+
+        /* Theme Toggle */
+        #theme-toggle {
+            position: fixed; 
+            top: 25px; 
             right: 25px;
-            background: var(--card-background-color);
-            border-radius: 50%;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 18px; 
+            width: 48px; 
+            height: 48px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            z-index: 1100;
+        }
+
+        /* Botão FAB (+) corrigido */
+        .fab-add {
             width: 45px;
             height: 45px;
+            background: var(--primary);
+            color: white !important;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border: 1px solid rgba(120, 120, 120, 0.2);
-            z-index: 1000;
-            font-size: 1.2rem;
+            text-decoration: none;
+            transition: 0.3s;
         }
+        .fab-add:hover { transform: rotate(90deg) scale(1.1); background: var(--primary-hover); }
 
-
-        .fab-new:hover { transform: scale(1.05); color: white; opacity: 0.9; }
+        @media (max-width: 600px) {
+            header { padding: 60px 0 30px; }
+            .folder-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .folder-card { padding: 30px 15px; }
+            .folder-icon { font-size: 3rem; }
+            .bottom-nav { width: 90%; justify-content: space-around; gap: 10px; }
+        }
     </style>
 </head>
-<body class="container">
+<body>
 
-    <div id="theme-toggle" onclick="toggleTheme()" title="Mudar visual">
+    <div id="theme-toggle" onclick="toggleTheme()" title="Trocar Tema">
         <span id="theme-icon">🌙</span>
     </div>
 
-    <header style="margin-top: 60px; margin-bottom: 40px;">
-        <h1 style="font-weight: 800; letter-spacing: -1.5px;">📖 Minha Estante</h1>
+    <main class="shelf-container">
+        <header>
+            <h1>Minha Estante</h1>
+            <p style="opacity: 0.6;">Coleção de memórias e aprendizados</p>
+        </header>
 
-    </header>
-
-    <div class="folder-grid">
-        {% for ano in anos %}
-        <a href="{{ url_for('ver_ano', ano=ano) }}" class="folder">
-            <span class="folder-icon">📂</span>
-            <span class="folder-name">Ano {{ ano }}</span>
-        </a>
-        {% else %}
-        <div style="grid-column: 1/-1; text-align: center; padding: 50px; opacity: 0.5;">
-            <p>Nenhum registro encontrado ainda.</p>
+        <div class="folder-grid">
+            {% for ano in anos %}
+            <a href="{{ url_for('ver_ano', ano=ano) }}" class="folder-card">
+                <span class="folder-icon">📂</span>
+                <span class="folder-name">{{ ano }}</span>
+                <span class="folder-status">Abrir Arquivo</span>
+            </a>
+            {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; border: 2px dashed var(--card-border); border-radius: 30px; opacity: 0.6;">
+                <p>Nenhum registro encontrado.</p>
+                <a href="{{ url_for('escrever') }}" style="color: var(--primary); font-weight: 700;">Começar agora →</a>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    </main>
 
- 
+    <nav class="bottom-nav">
+        <a href="{{ url_for('index') }}" class="nav-link" style="color: var(--primary);">Estante</a>
+        <a href="{{ url_for('escrever') }}" class="fab-add" title="Nova Memória">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </a>
+        <a href="{{ url_for('logout') }}" class="nav-link logout-link">Sair</a>
+    </nav>
 
     <script>
         function toggleTheme() {
             const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('journal-theme', newTheme);
             updateIcon(newTheme);
         }
 
         function updateIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            icon.innerText = theme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('theme-icon').innerText = theme === 'dark' ? '☀️' : '🌙';
         }
 
-        // Inicializar tema salvo ou padrão do sistema
         const savedTheme = localStorage.getItem('journal-theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateIcon(savedTheme);

@@ -4,105 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diários de {{ ano }}</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        :root {
+            --primary: #6366f1;
+            --primary-soft: rgba(99, 102, 241, 0.1);
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --card-radius: 24px;
+        }
 
-        /* Cabeçalho e Navegação */
-        .header-section { margin-top: 60px; margin-bottom: 50px; }
-        .back-btn { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 0.9rem; }
+        body { 
+            font-family: var(--font-family); 
+            background: var(--background-color);
+            transition: background 0.4s ease;
+        }
+
+        /* Cabeçalho Refinado */
+        .header-section { margin-top: 80px; margin-bottom: 60px; }
         
-        /* Estilo dos Cards de Memória */
-        .memory-list { display: flex; flex-direction: column; gap: 20px; }
+        .back-btn { 
+            text-decoration: none; 
+            font-weight: 700; 
+            color: var(--text-muted); 
+            font-size: 0.85rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .back-btn:hover { color: var(--primary); transform: translateX(-5px); }
+        
+        h1 { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            letter-spacing: -3px; 
+            margin-top: 15px;
+            background: linear-gradient(to right, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Lista em Estilo Timeline */
+        .memory-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 24px; 
+            border-left: 2px solid var(--primary-soft);
+            padding-left: 30px;
+            margin-left: 10px;
+        }
         
         .memory-card {
             border: none;
-            background: rgba(120, 120, 120, 0.05);
+            background: var(--card-background-color);
             border: 1px solid rgba(120, 120, 120, 0.1);
-            border-radius: 18px;
-            padding: 50px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
+            border-radius: var(--card-radius);
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-      
+            cursor: pointer;
+        }
+
+        /* A "bolinha" da timeline */
+        .memory-card::before {
+            content: '';
+            position: absolute;
+            left: -41px;
+            top: 50px;
+            width: 20px;
+            height: 20px;
+            background: var(--background-color);
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            z-index: 2;
         }
 
         .memory-card:hover {
-            transform: scale(1.01);
-            background: rgba(120, 120, 120, 0.08);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-
-        .memory-card header { 
-            background: transparent; 
-            border: none; 
-            padding: 0; 
-            margin-bottom: 15px; 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center;
+            transform: scale(1.02) translateX(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-color: var(--primary);
         }
 
         .memory-date {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #6366f1;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: block;
         }
 
-        .memory-title { margin: 0; font-weight: 800; font-size: 1.6rem; }
+        .memory-title { 
+            margin: 0; 
+            font-weight: 800; 
+            font-size: 1.8rem; 
+            letter-spacing: -1px;
+            color: var(--h1-color);
+        }
 
-        /* Rodapé do Card (Ações) */
-        .memory-card footer {
-            background: transparent;
-            border: none;
-            padding: 15px 0 0 0;
+        /* Ações do Card */
+        .card-actions {
+            margin-top: 25px;
             display: flex;
-            gap: 20px;
+            gap: 15px;
+            border-top: 1px solid rgba(120, 120, 120, 0.1);
+            padding-top: 20px;
         }
 
-        .action-btn {
+        .action-link {
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             text-decoration: none;
-            color: var(--color);
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            color: var(--text-muted);
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .action-btn:hover { opacity: 1; color: var(--primary); }
-        .delete-btn:hover { color: #e74c3c !important; }
+        .action-link:hover { color: var(--primary); }
+        .delete-link:hover { color: #ff4d4d !important; }
 
-        /* Botão de Tema */
-        #theme-toggle {
-            position: fixed; top: 25px; right: 25px;
-            background: var(--card-background-color);
-            border-radius: 50%; width: 45px; height: 45px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid rgba(120, 120, 120, 0.2); z-index: 1000;
-        }
-
-
-                /* Botão Nova Memória */
+        /* Botão Flutuante (FAB) */
         .fab-new {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            border-radius: 50px;
-            padding: 15px 30px;
-            background-color: #6366f1;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            bottom: 40px;
+            right: 40px;
+            background: var(--primary);
+            color: white !important;
+            padding: 16px 32px;
+            border-radius: 100px;
+            font-weight: 800;
             text-decoration: none;
-            border: none;
-            z-index: 999;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        .fab-new:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(99, 102, 241, 0.5); }
 
+        /* Theme Toggle */
+        #theme-toggle {
+            position: fixed; top: 30px; right: 30px;
+            background: rgba(120, 120, 120, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50%; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 1000; border: 1px solid rgba(120, 120, 120, 0.2);
+        }
     </style>
 </head>
 <body class="container">
@@ -111,38 +168,43 @@
         <span id="theme-icon">🌙</span>
     </div>
 
-    <div class="header-section">
-        <a href="{{ url_for('index') }}" class="back-btn">← Voltar para a Estante</a>
-        <h1 style="margin-top: 20px; font-weight: 800; letter-spacing: -1.5px;">Diários de {{ ano }}</h1>
-    </div>
+    <header class="header-section">
+        <a href="{{ url_for('index') }}" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Estante
+        </a>
+        <h1>{{ ano }}</h1>
+    </header>
 
     <div class="memory-list">
         {% for entrada in entradas %}
-        <article class="memory-card">
-            <header>
-                <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y') }}</span>
-            </header>
-            
+        <article class="memory-card" onclick="location.href='{{ url_for('visualizar', id=entrada.id) }}'">
+            <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y') }}</span>
             <h3 class="memory-title">{{ entrada.titulo }}</h3>
-             
-            <footer>
-                <a href="{{ url_for('visualizar', id=entrada.id) }}" class="action-btn">📖 Ler Memória</a>
-                <a href="{{ url_for('editar', id=entrada.id) }}" class="action-btn">✏️ Editar</a>
-                <a href="#" class="action-btn delete-btn" 
-                   onclick="if(confirm('Apagar esta memória para sempre?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
-                   🗑️ Excluir
+            
+            <div class="card-actions">
+                <a href="{{ url_for('editar', id=entrada.id) }}" class="action-link" onclick="event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
+                    Editar
                 </a>
-            </footer>
+                <a href="#" class="action-link delete-link" onclick="event.stopPropagation(); if(confirm('Apagar para sempre?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Excluir
+                </a>
+            </div>
         </article>
         {% else %}
-
-        
         <div style="text-align: center; padding: 100px; opacity: 0.5;">
-            <p>Nenhuma memória encontrada neste ano.</p>
+            <p>Ainda não há registros nesta parte da sua história.</p>
         </div>
         {% endfor %}
     </div>
-    <a href="{{ url_for('escrever') }}" class="fab-new">+ Nova Memória</a>
+
+    <a href="{{ url_for('escrever') }}" class="fab-new">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Nova Memória
+    </a>
+
     <script>
         function toggleTheme() {
             const html = document.documentElement;
