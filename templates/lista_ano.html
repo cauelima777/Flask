@@ -1,18 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Diários de {{ ano }}</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" />
 
     <style>
       :root {
@@ -27,14 +21,10 @@
         font-family: var(--font-family);
         background: var(--background-color);
         transition: background 0.4s ease;
-        padding-bottom: 120px; /* Respiro para a barra não cobrir o conteúdo */
+        padding-bottom: 120px;
       }
 
-      /* Tema e Header */
-      .header-section {
-        margin-top: 60px;
-        margin-bottom: 40px;
-      }
+      header { margin-top: 60px; margin-bottom: 40px; }
 
       h1 {
         font-size: clamp(2.5rem, 8vw, 4rem);
@@ -87,9 +77,7 @@
         border-color: var(--primary);
       }
 
-      .memory-card:hover::before {
-        background: var(--primary);
-      }
+      .memory-card:hover::before { background: var(--primary); }
 
       .memory-date {
         font-size: 0.8rem;
@@ -100,12 +88,7 @@
         margin-bottom: 8px;
       }
 
-      .memory-title {
-        margin: 0;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: var(--h1-color);
-      }
+      .memory-title { margin: 0; font-weight: 700; font-size: 1.5rem; color: var(--h1-color); }
 
       .card-actions {
         margin-top: 20px;
@@ -125,212 +108,92 @@
         gap: 6px;
       }
 
-      .action-link:hover {
-        color: var(--primary);
-      }
-      .delete-link:hover {
-        color: #ef4444 !important;
-      }
+      .action-link:hover { color: var(--primary); }
+      .delete-link:hover { color: #ef4444 !important; }
 
-      /* NOVA BARRA FLUTUANTE (FLOATING NAV) */
-      .floating-nav {
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(25, 25, 25, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 8px 12px;
-        border-radius: 100px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        z-index: 1000;
-      }
-
-      .nav-item {
-        color: white !important;
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 700;
-        padding: 10px 18px;
-        border-radius: 50px;
-        transition: var(--transition);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        opacity: 0.7;
-      }
-
-      .nav-item:hover {
-        opacity: 1;
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .nav-add {
-        background: var(--primary) !important;
-        color: white !important;
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        transition: var(--transition);
-      }
-
-      .nav-add:hover {
-        transform: scale(1.1) rotate(90deg);
-      }
-
-      /* Botão de Tema */
-      #theme-toggle {
-        position: fixed;
-        top: 30px;
-        right: 30px;
-        background: rgba(120, 120, 120, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 50%;
-        width: 45px;
-        height: 45px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 1000;
-        border: 1px solid rgba(120, 120, 120, 0.2);
-      }
-
-      /* Variáveis para facilitar o tema (se você já tiver, ignore esta parte e use as suas) */
-      :root {
-        --modal-bg: #ffffff;
-        --modal-text: #333333;
-        --modal-overlay: rgba(0, 0, 0, 0.6);
-        --btn-cancel-bg: #e0e0e0;
-        --btn-cancel-text: #666;
-      }
-
-      /* Detecta se o usuário/sistema usa tema escuro */
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --modal-bg: #1e1e1e;
-          --modal-text: #f5f5f5;
-          --modal-overlay: rgba(0, 0, 0, 0.8);
-          --btn-cancel-bg: #333333;
-          --btn-cancel-text: #bbb;
-        }
-      }
-
+      /* --- NOVO MODAL COM EFEITO BLUR (ESTILO GRAFITE) --- */
       .modal {
         display: none;
         position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--modal-overlay);
-        backdrop-filter: blur(4px); /* Efeito de vidro atrás do modal */
-        align-items: center; /* Centraliza verticalmente */
-        justify-content: center; /* Centraliza horizontalmente */
-      }
-
-      /* Para o display:flex funcionar no JS, mude modal.style.display = "block" para "flex" */
-      .modal-content {
-        background-color: var(--modal-bg);
-        color: var(--modal-text);
-        padding: 2rem;
-        width: 90%;
-        max-width: 400px;
-        border-radius: 16px;
-        text-align: center;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        animation: modalEntrada 0.3s ease-out;
-      }
-
-      @keyframes modalEntrada {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .modal-content h3 {
-        margin-top: 0;
-        font-size: 1.5rem;
-      }
-
-      .modal-content p {
-        font-size: 1rem;
-        opacity: 0.9;
-        margin-bottom: 25px;
-      }
-
-      .modal-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-      }
-
-      .btn-confirm,
-      .btn-cancel {
-        flex: 1;
-        /* Ajuste o padding vertical (o primeiro número) */
-        padding: 10px 12px;
-
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        text-decoration: none;
-        border: none;
-
-        /* ESSAS TRÊS LINHAS SÃO O SEGREDO: */
-        display: inline-flex;
+        z-index: 2000;
+        left: 0; top: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         align-items: center;
         justify-content: center;
-        height: 40px; /* Força os dois a terem exatamente a mesma altura */
-        box-sizing: border-box; /* Garante que o padding não aumente o tamanho final */
+        animation: fadeIn 0.3s ease;
       }
 
-      .btn-confirm {
-        background: #ff4d4d;
-        color: white;
+      .modal-content {
+        background-color: rgba(26, 26, 26, 0.95); /* Grafite translúcido */
+        padding: 45px 35px;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 32px;
+        text-align: center;
+        color: #ffffff;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
-      .btn-confirm:hover {
-        background: #ff3333;
-        transform: scale(1.02);
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+      .modal-content h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; color: #ffffff !important; border: none; }
+      .modal-content p { font-size: 1.1rem; color: #a0a0a0; margin-bottom: 35px; line-height: 1.4; }
+
+      .modal-buttons { display: flex; gap: 15px; }
+
+      .btn-confirm, .btn-cancel {
+        flex: 1; height: 54px; border-radius: 16px;
+        font-weight: 700; font-size: 1rem; cursor: pointer;
+        border: none; text-decoration: none; display: flex;
+        align-items: center; justify-content: center; transition: all 0.2s;
       }
 
-      .btn-cancel {
-        background: var(--btn-cancel-bg);
-        color: var(--btn-cancel-text);
+      .btn-cancel { background-color: #333; color: #ffffff; }
+      .btn-confirm { background-color: #ff5252; color: #ffffff; }
+      .btn-confirm:hover { transform: scale(1.05); background-color: #ff3333; }
+      .btn-cancel:hover { background-color: #444; }
+
+      /* Floating Nav */
+      .floating-nav {
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: rgba(25, 25, 25, 0.85); backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 12px; border-radius: 100px; display: flex; align-items: center; gap: 8px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); z-index: 1000;
       }
 
-      .btn-cancel:hover {
-        filter: brightness(0.9);
+      .nav-item {
+        color: white !important; text-decoration: none; font-size: 0.85rem; font-weight: 700;
+        padding: 10px 18px; border-radius: 50px; transition: var(--transition);
+        display: flex; align-items: center; gap: 8px; opacity: 0.7;
+      }
+
+      .nav-item:hover { opacity: 1; background: rgba(255, 255, 255, 0.1); }
+
+      .nav-add {
+        background: var(--primary) !important; color: white !important;
+        width: 52px; height: 52px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: var(--transition);
+      }
+
+      .nav-add:hover { transform: scale(1.1) rotate(90deg); }
+
+      #theme-toggle {
+        position: fixed; top: 30px; right: 30px;
+        background: rgba(120, 120, 120, 0.1); backdrop-filter: blur(10px);
+        border-radius: 50%; width: 45px; height: 45px; display: flex;
+        align-items: center; justify-content: center; cursor: pointer; z-index: 1000;
+        border: 1px solid rgba(120, 120, 120, 0.2);
       }
 
       @media (max-width: 600px) {
-        .floating-nav {
-          width: 95%;
-          justify-content: space-between;
-        }
-        .nav-item span {
-          display: none;
-        } /* Deixa só ícones no mobile */
-        .header-section {
-          margin-top: 40px;
-        }
+        .floating-nav { width: 95%; justify-content: space-between; }
+        .nav-item span { display: none; }
       }
     </style>
   </head>
@@ -339,65 +202,28 @@
       <span id="theme-icon">🌙</span>
     </div>
 
-    <header class="header-section">
+    <header>
       <h1>{{ ano }}</h1>
     </header>
 
     <div class="memory-list">
       {% for entrada in entradas %}
-      <article
-        class="memory-card"
-        onclick="location.href='{{ url_for('visualizar', id=entrada.id) }}'"
-      >
-        <span class="memory-date"
-          >{{ entrada.data_criacao.strftime('%d . %m . %Y') }}</span
-        >
+      <article class="memory-card" onclick="location.href='{{ url_for('visualizar', id=entrada.id) }}'">
+        <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y') }}</span>
         <h3 class="memory-title">{{ entrada.titulo }}</h3>
 
         <div class="card-actions">
-          <a
-            href="{{ url_for('editar', id=entrada.id) }}"
-            class="action-link"
-            onclick="event.stopPropagation()"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-              ></path>
-              <path
-                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"
-              ></path>
+          <a href="{{ url_for('editar', id=entrada.id) }}" class="action-link" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path>
             </svg>
             Editar
           </a>
-          <a
-            href="javascript:void(0)"
-            class="action-link delete-link"
-            onclick="event.stopPropagation(); openModal('{{ entrada.id }}')"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+          <a href="javascript:void(0)" class="action-link delete-link" onclick="event.stopPropagation(); openModal('{{ entrada.id }}')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 6 5 6 21 6"></polyline>
-              <path
-                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-              ></path>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
             </svg>
             Excluir
           </a>
@@ -412,54 +238,15 @@
 
     <nav class="floating-nav">
       <a href="{{ url_for('index') }}" class="nav-item">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span>Estante</span>
       </a>
-
       <a href="{{ url_for('escrever') }}" class="nav-add" title="Nova Memória">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       </a>
-
       <a href="{{ url_for('logout') }}" class="nav-item">
         <span>Sair</span>
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
       </a>
     </nav>
 
@@ -476,38 +263,28 @@
 
     <script>
       function openModal(id) {
-        const modal = document.getElementById("deleteModal");
-        const confirmBtn = document.getElementById("confirmDeleteBtn");
-        confirmBtn.href = "/deletar/" + id;
-
-        // Mude de "block" para "flex" para o CSS centralizar certinho
-        modal.style.display = "flex";
+        document.getElementById("confirmDeleteBtn").href = "/deletar/" + id;
+        document.getElementById("deleteModal").style.display = "flex";
       }
 
       function closeModal() {
         document.getElementById("deleteModal").style.display = "none";
       }
 
-      // Fecha o modal se clicar fora dele
       window.onclick = function (event) {
-        let modal = document.getElementById("deleteModal");
-        if (event.target == modal) {
-          closeModal();
-        }
+        if (event.target == document.getElementById("deleteModal")) closeModal();
       };
 
       function toggleTheme() {
         const html = document.documentElement;
-        const newTheme =
-          html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        const newTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
         html.setAttribute("data-theme", newTheme);
         localStorage.setItem("journal-theme", newTheme);
         updateIcon(newTheme);
       }
 
       function updateIcon(theme) {
-        document.getElementById("theme-icon").innerText =
-          theme === "dark" ? "☀️" : "🌙";
+        document.getElementById("theme-icon").innerText = theme === "dark" ? "☀️" : "🌙";
       }
 
       const savedTheme = localStorage.getItem("journal-theme") || "dark";

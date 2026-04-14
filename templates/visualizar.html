@@ -14,7 +14,6 @@
             --primary-hover: #4f46e5;
             --font-main: 'Plus Jakarta Sans', sans-serif;
             --font-serif: 'Lora', serif;
-            --bg-light: radial-gradient(circle at top left, #f8fafc, #ffffff);
             --bg-dark: #0f172a;
             --text-muted: #64748b;
         }
@@ -29,18 +28,16 @@
             background: var(--background-color);
             background-attachment: fixed;
             transition: background 0.4s ease;
+            margin: 0;
         }
 
         .view-container {
-            max-width: 760px;
+            max-width: 950px;
             margin: 0 auto;
-            padding: 80px 24px;
+            padding: 40px 24px;
         }
 
-        /* Navegação sutil */
-        .view-nav {
-            margin-bottom: 5rem;
-        }
+        .view-nav { margin-bottom: 5rem; }
 
         .back-link {
             text-decoration: none;
@@ -58,10 +55,7 @@
             transform: translateX(-4px);
         }
 
-        /* Tipografia do Cabeçalho */
-        header {
-            margin-bottom: 4rem;
-        }
+        header { margin-bottom: 4rem; }
 
         .view-date {
             font-size: 0.75rem;
@@ -74,51 +68,36 @@
         }
 
         h1 {
-            font-size: clamp(2.5rem, 8vw, 4rem); /* Responsivo */
+            font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 800;
             letter-spacing: -0.04em;
             line-height: 1.05;
             margin: 0;
-            color: var(--h1-color);
         }
 
-        /* Estilo do Conteúdo - Foco em Leitura */
         .view-content {
-            font-family: var(--font-serif); /* Fonte serifada para o texto longo */
+            font-family: var(--font-serif);
             font-size: 1.35rem;
             line-height: 1.85;
-            color: var(--color);
             opacity: 0.95;
         }
 
-        /* Estilizando parágrafos e elementos dentro do conteúdo rico */
-        .view-content p { margin-bottom: 2rem; }
-        .view-content blockquote {
-            border-left: 4px solid var(--primary);
-            font-style: italic;
-            padding-left: 1.5rem;
-            margin: 2.5rem 0;
-            color: var(--text-muted);
+        .view-content p { margin-bottom: 5rem;  
+        
+        
+        
         }
 
-        /* Rodapé Elegante */
         footer {
             margin-top: 8rem;
             padding-top: 3rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            border-top: 1px solid rgba(128,128,128,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        [data-theme="dark"] footer {
-            border-top-color: rgba(255,255,255,0.05);
-        }
-
-        .action-group {
-            display: flex;
-            gap: 24px;
-        }
+        .action-group { display: flex; gap: 24px; }
 
         .btn-action {
             font-size: 0.85rem;
@@ -126,53 +105,84 @@
             text-decoration: none;
             color: var(--text-muted);
             transition: all 0.2s;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
         }
 
-        .btn-action:hover {
-            color: var(--primary);
-        }
+        .btn-action:hover { color: var(--primary); }
+        .delete-btn:hover { color: #ff5252; }
 
-        /* Botão de Tema "Glassmorphism" */
-        #theme-toggle {
+        /* --- O EFEITO DE BLUR NO MODAL --- */
+        .modal {
+            display: none;
             position: fixed;
-            bottom: 40px; /* Mudei para baixo para não poluir o topo */
-            right: 40px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
+            z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Overlay levemente transparente */
+            backdrop-filter: blur(10px); /* O EFEITO "LÁ" (BLUR) */
+            -webkit-backdrop-filter: blur(10px); /* Suporte para Safari */
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: rgba(26, 26, 26, 0.95); /* Fundo grafite com leve transparência */
+            padding: 45px 35px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 32px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(1);
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-content h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; color: #ffffff; border: none; }
+        .modal-content p { font-size: 1.1rem; color: #a0a0a0; margin-bottom: 35px; line-height: 1.4; }
+
+        .modal-buttons { display: flex; gap: 15px; }
+
+        .btn-confirm, .btn-cancel {
+            flex: 1; height: 54px; border-radius: 16px;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            border: none; text-decoration: none; display: flex;
+            align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel { background-color: #333; color: #ffffff; }
+        .btn-confirm { background-color: #ff5252; color: #ffffff; }
+        .btn-confirm:hover { transform: scale(1.05); background-color: #ff3333; }
+        .btn-cancel:hover { background-color: #444; }
+
+        #theme-toggle {
+            position: fixed; bottom: 40px; right: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px); border-radius: 50%;
+            width: 50px; height: 50px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; z-index: 1000;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        [data-theme="dark"] #theme-toggle {
-            background: rgba(15, 23, 42, 0.7);
-            border-color: rgba(255,255,255,0.1);
-        }
+        [data-theme="dark"] #theme-toggle { background: rgba(15, 23, 42, 0.7); }
 
-        #theme-toggle:hover {
-            transform: scale(1.1) rotate(12deg);
-        }
-
-        /* Ajustes Mobile */
         @media (max-width: 600px) {
             .view-container { padding: 40px 20px; }
-            h1 { font-size: 2.5rem; }
             footer { flex-direction: column; gap: 20px; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
-    <div id="theme-toggle" title="Alternar tema" onclick="toggleTheme()">
-        <span id="theme-icon" style="font-size: 1.2rem;">🌙</span>
+    <div id="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
     </div>
 
     <main class="view-container">
@@ -196,15 +206,42 @@
             <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
                 Escrito por você.
             </span>
+            <div class="action-group">
+                <a href="{{ url_for('editar', id=entrada.id) }}" class="btn-action">Editar</a>
+                <button onclick="openModal('{{ entrada.id }}')" class="btn-action delete-btn">Excluir</button>
+            </div>
         </footer>
     </main>
 
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar Exclusão</h3>
+            <p>Você tem certeza que deseja apagar esta memória para sempre?</p>
+            <div class="modal-buttons">
+                <button onclick="closeModal()" class="btn-cancel">Cancelar</button>
+                <a id="confirmDeleteBtn" href="#" class="btn-confirm">Excluir</a>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openModal(id) {
+            document.getElementById('confirmDeleteBtn').href = "/deletar/" + id;
+            document.getElementById('deleteModal').style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('deleteModal')) closeModal();
+        }
+
         function toggleTheme() {
             const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('journal-theme', newTheme);
             updateIcon(newTheme);
