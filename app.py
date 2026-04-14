@@ -40,7 +40,7 @@ class Usuario(db.Model, UserMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     senha_hash = db.Column(db.String(256), nullable=False)
 
-class Entrada(db.Model): # REMOVIDO @login_required daqui
+class Entrada(db.Model): 
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(100), nullable=False)
     conteudo = db.Column(db.Text, nullable=False)
@@ -92,16 +92,20 @@ def escrever():
         nova_entrada = Entrada(titulo=novo_titulo, conteudo=novo_conteudo)
         db.session.add(nova_entrada)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('ver_ano', ano=nova_entrada.data_criacao.year))
     return render_template('escrever.html')
 
 @app.route('/deletar/<int:id>')
 @login_required
 def deletar(id):
     entrada = Entrada.query.get_or_404(id)
+    ano_da_memoria = entrada.data_criacao.year 
+    
     db.session.delete(entrada)
     db.session.commit()
-    return redirect(url_for('index'))
+
+    return redirect(url_for('ver_ano', ano=ano_da_memoria))
+
 
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -111,7 +115,7 @@ def editar(id):
         entrada.titulo = request.form['titulo']
         entrada.conteudo = request.form['conteudo']
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('ver_ano', ano=entrada.data_criacao.year))
     return render_template('editar.html', entrada=entrada)
 
 @app.route('/visualizar/<int:id>')
