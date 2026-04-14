@@ -193,13 +193,6 @@
         </article>
 
         <footer>
-            <div class="action-group">
-                <a href="{{ url_for('editar', id=entrada.id) }}" class="btn-action">Editar</a>
-                <a href="#" class="btn-action" style="color: #f87171;" 
-                   onclick="if(confirm('Apagar esta memória para sempre?')) location.href='{{ url_for('deletar', id=entrada.id) }}'">
-                   Excluir
-                </a>
-            </div>
             <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
                 Escrito por você.
             </span>
