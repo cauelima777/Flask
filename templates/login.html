@@ -11,6 +11,7 @@
     <div class="login-box">
         <h2 style="text-align: center;">🔐 Acesso Restrito</h2>
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label>Usuário</label>
             <input type="text" name="username" required>
             <label>Senha</label>

@@ -150,6 +150,7 @@
 
     <main class="editor-container">
         <form method="POST" id="diary-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="titulo" class="titulo-input" 
                    placeholder="Título da memória..." 
                    value="{{ entrada.titulo if entrada else '' }}" required autocomplete="off" autofocus>

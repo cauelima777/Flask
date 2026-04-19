@@ -36,7 +36,6 @@
         -webkit-text-fill-color: transparent;
       }
 
-      /* Timeline e Cards */
       .memory-list {
         display: flex;
         flex-direction: column;
@@ -111,7 +110,6 @@
       .action-link:hover { color: var(--primary); }
       .delete-link:hover { color: #ef4444 !important; }
 
-      /* --- NOVO MODAL COM EFEITO BLUR (ESTILO GRAFITE) --- */
       .modal {
         display: none;
         position: fixed;
@@ -126,7 +124,7 @@
       }
 
       .modal-content {
-        background-color: rgba(26, 26, 26, 0.95); /* Grafite translúcido */
+        background-color: rgba(26, 26, 26, 0.95);
         padding: 45px 35px;
         width: 90%;
         max-width: 400px;
@@ -157,7 +155,6 @@
       .btn-confirm:hover { transform: scale(1.05); background-color: #ff3333; }
       .btn-cancel:hover { background-color: #444; }
 
-      /* Floating Nav */
       .floating-nav {
         position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
         background: rgba(25, 25, 25, 0.85); backdrop-filter: blur(12px);
@@ -198,20 +195,27 @@
     </style>
   </head>
   <body class="container">
+    
+    <form id="logout-form" action="{{ url_for('logout') }}" method="POST" style="display: none;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+
+    <form id="delete-form" method="POST" style="display: none;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+
     <div id="theme-toggle" onclick="toggleTheme()">
       <span id="theme-icon">🌙</span>
     </div>
 
     <header>
       <h1>{{ ano }}</h1>
-
     </header>
 
     <div class="memory-list">
       {% for entrada in entradas %}
       <article class="memory-card" onclick="location.href='{{ url_for('visualizar', id=entrada.id) }}'">
-        <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y - %H:%M') }}
-</span>
+        <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y - %H:%M') }}</span>
         <h3 class="memory-title">{{ entrada.titulo }}</h3>
 
         <div class="card-actions">
@@ -246,7 +250,7 @@
       <a href="{{ url_for('escrever') }}" class="nav-add" title="Nova Memória">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       </a>
-      <a href="{{ url_for('logout') }}" class="nav-item">
+      <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();" class="nav-item">
         <span>Sair</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
       </a>
@@ -258,19 +262,30 @@
         <p>Você tem certeza que deseja apagar esta memória para sempre?</p>
         <div class="modal-buttons">
           <button onclick="closeModal()" class="btn-cancel">Cancelar</button>
-          <a id="confirmDeleteBtn" href="#" class="btn-confirm">Excluir</a>
+          <button onclick="submitDelete()" class="btn-confirm">Excluir</button>
         </div>
       </div>
     </div>
 
     <script>
+      let idParaDeletar = null;
+
       function openModal(id) {
-        document.getElementById("confirmDeleteBtn").href = "/deletar/" + id;
+        idParaDeletar = id;
         document.getElementById("deleteModal").style.display = "flex";
       }
 
       function closeModal() {
         document.getElementById("deleteModal").style.display = "none";
+        idParaDeletar = null;
+      }
+
+      function submitDelete() {
+        if (idParaDeletar) {
+            const form = document.getElementById('delete-form');
+            form.action = "/deletar/" + idParaDeletar;
+            form.submit();
+        }
       }
 
       window.onclick = function (event) {

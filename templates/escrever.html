@@ -140,6 +140,7 @@
         </header>
 
         <form method="POST" id="diario-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="titulo" class="title-input" placeholder="Título da memória..." required autocomplete="off" autofocus>
 
             <div id="editor-wrapper">
