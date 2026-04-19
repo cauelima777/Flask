@@ -204,12 +204,14 @@
 
     <header>
       <h1>{{ ano }}</h1>
+
     </header>
 
     <div class="memory-list">
       {% for entrada in entradas %}
       <article class="memory-card" onclick="location.href='{{ url_for('visualizar', id=entrada.id) }}'">
-        <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y') }}</span>
+        <span class="memory-date">{{ entrada.data_criacao.strftime('%d . %m . %Y - %H:%M') }}
+</span>
         <h3 class="memory-title">{{ entrada.titulo }}</h3>
 
         <div class="card-actions">
